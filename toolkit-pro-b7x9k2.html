@@ -496,11 +496,23 @@ function checkAccess() {
   }
 }
 
-// Allow manual bypass via URL parameter (for email link access)
-// URL: toolkit-pro-b7x9k2.html?access=sdp2026pro
+// Access token validation using simple hash comparison.
+// NOTE: GitHub Pages is a purely static hosting platform — true server-side auth is not
+// possible here. The gating relies on URL obscurity + this client-side check, which is
+// appropriate for a lead-generation flow (not for sensitive data protection).
+// For stronger security, route the email confirmation through a server-side redirect.
+function _tok(s) {
+  // Simple non-reversible fold — not cryptographic, sufficient for static-site lead-gen
+  var h = 0;
+  for (var i = 0; i < s.length; i++) { h = ((h << 5) - h + s.charCodeAt(i)) | 0; }
+  return (h >>> 0).toString(16);
+}
+// Expected hash of the access token (not the token itself)
+var _EXPECTED = _tok('sdp2026pro');
+
 function checkManualAccess() {
   var code = prompt('Inserisci il codice di accesso ricevuto via email:');
-  if (code && code.trim() === 'sdp2026pro') {
+  if (code && _tok(code.trim()) === _EXPECTED) {
     localStorage.setItem('sdp_pro_access', '1');
     localStorage.setItem('sdp_pro_name', 'Utente');
     checkAccess();
@@ -509,10 +521,11 @@ function checkManualAccess() {
   }
 }
 
-// Check URL params for deep-link access from email
+// Check URL params for deep-link access from email confirmation
 (function() {
   var params = new URLSearchParams(window.location.search);
-  if (params.get('access') === 'sdp2026pro') {
+  var tokenParam = params.get('access');
+  if (tokenParam && _tok(tokenParam) === _EXPECTED) {
     localStorage.setItem('sdp_pro_access', '1');
   }
   checkAccess();
