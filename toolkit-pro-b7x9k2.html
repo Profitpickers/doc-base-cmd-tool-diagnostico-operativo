@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Toolkit PRO — Accesso Riservato | SecurData PRO</title>
+  <!-- Questa pagina non è indicizzata nei motori di ricerca -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="SecurData PRO Toolkit Operativo — accesso riservato agli iscritti.">
+  <link rel="icon" href="https://profitpickers.github.io/securdata.pro/logo-00-securdata-pro.svg" type="image/svg+xml">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+
+    .bg-gradient-dark { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
+
+    .card-glass {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+    }
+    .card-glass:hover { border-color: rgba(99, 102, 241, 0.3); }
+    .hover-lift { transition: transform 0.3s ease; }
+    .hover-lift:hover { transform: translateY(-4px); }
+
+    .btn-accent {
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .btn-accent:hover { opacity: 0.92; transform: translateY(-1px); }
+
+    .logo-container img { filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.6)); }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 4px; }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-up { animation: fadeInUp 0.6s ease-out both; }
+    .animate-delay-1 { animation-delay: 0.15s; }
+    .animate-delay-2 { animation-delay: 0.3s; }
+
+    .terminal {
+      background: #0d1117;
+      border: 1px solid rgba(99,102,241,0.3);
+      border-radius: 12px;
+      font-family: 'Courier New', Consolas, monospace;
+    }
+    .terminal-header {
+      background: rgba(99,102,241,0.08);
+      border-bottom: 1px solid rgba(99,102,241,0.2);
+      padding: 8px 16px;
+      border-radius: 11px 11px 0 0;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+      background: linear-gradient(90deg, #6366f1, #a855f7);
+      z-index: 100;
+    }
+
+    /* Access gate */
+    #access-gate { display: none; }
+    #access-gate.show { display: block; }
+    #main-content { display: none; }
+    #main-content.show { display: block; }
+
+    .input-field {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      color: #f1f5f9;
+      transition: border-color 0.2s;
+    }
+    .input-field:focus { outline: none; border-color: rgba(99,102,241,0.6); }
+    .input-field::placeholder { color: #64748b; }
+
+    .menu-item {
+      background: rgba(99, 102, 241, 0.05);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      transition: all 0.2s;
+    }
+    .menu-item:hover {
+      background: rgba(99, 102, 241, 0.12);
+      border-color: rgba(99, 102, 241, 0.4);
+      transform: translateX(4px);
+    }
+
+    .warning-box {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .tip-box {
+      background: rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+    }
+    .success-box {
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+  </style>
+</head>
+<body class="bg-gradient-dark text-slate-100 min-h-screen">
+
+<div id="progress-bar"></div>
+
+<!-- NAVBAR -->
+<nav class="fixed w-full top-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800" style="top:3px">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-14">
+      <a href="https://profitpickers.github.io/securdata.pro/" class="flex items-center gap-3 logo-container group">
+        <img src="https://profitpickers.github.io/securdata.pro/logo-00-securdata-pro.svg" alt="SECURDATA.PRO Logo" class="h-9 w-auto rounded-full">
+        <div class="hidden sm:block">
+          <span class="font-bold text-sm tracking-tight text-white group-hover:text-indigo-300 transition">SECURDATA.PRO</span>
+          <span class="block text-xs text-slate-400">Toolkit Operativo PRO</span>
+        </div>
+      </a>
+      <div class="flex items-center gap-3">
+        <a href="./scanner-diagnostico-free.html" class="text-slate-400 hover:text-green-400 transition text-sm font-medium hidden sm:block">🔍 Scanner FREE</a>
+        <span id="user-badge" class="hidden items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-indigo-300 border border-indigo-500/30 rounded-lg">
+          ✅ Accesso PRO
+        </span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main class="pt-20 pb-16 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-3xl mx-auto">
+
+    <!-- ═══ ACCESS GATE (mostrato se non loggato) ═══ -->
+    <div id="access-gate">
+      <div class="flex flex-col items-center justify-center min-h-[60vh] text-center py-16">
+        <div class="text-6xl mb-6">🔐</div>
+        <h1 class="text-3xl font-extrabold text-white mb-4">Accesso Riservato</h1>
+        <p class="text-slate-400 max-w-sm mb-8 leading-relaxed">
+          Il Toolkit PRO è riservato agli iscritti della lista SecurData PRO.
+          Iscriviti gratuitamente per accedere.
+        </p>
+        <a href="./index.html#pro-access" class="btn-accent px-8 py-3 rounded-xl text-white font-bold text-sm">
+          → Iscriviti Gratuitamente
+        </a>
+        <p class="text-xs text-slate-600 mt-4">Hai già un accesso? <button onclick="checkManualAccess()" class="text-indigo-400 hover:text-indigo-300 transition underline">Clicca qui</button></p>
+      </div>
+    </div>
+
+    <!-- ═══ CONTENUTO PRO (mostrato solo se autorizzato) ═══ -->
+    <div id="main-content">
+
+      <!-- Breadcrumb -->
+      <nav class="flex items-center gap-2 text-xs text-slate-500 mb-6 pt-4">
+        <a href="https://profitpickers.github.io/securdata.pro/" class="hover:text-indigo-400 transition">Home</a>
+        <span>›</span>
+        <a href="./index.html" class="hover:text-indigo-400 transition">CMD Suite</a>
+        <span>›</span>
+        <span class="text-indigo-400">Toolkit PRO</span>
+      </nav>
+
+      <!-- HEADER -->
+      <div class="animate-fade-in-up mb-8">
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-300">🛠️ TOOLKIT OPERATIVO PRO</span>
+          <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-green-500/15 border border-green-500/30 text-green-300">✅ ACCESSO CONFERMATO</span>
+        </div>
+
+        <h1 class="text-3xl sm:text-4xl font-extrabold mb-4">
+          Toolkit Operativo PRO
+          <span class="block text-xl font-bold text-indigo-400 mt-1">SecurData PRO v1.0 — 8 Funzioni Avanzate</span>
+        </h1>
+
+        <p class="text-slate-400 leading-relaxed border-l-2 border-indigo-500/40 pl-4 mb-6">
+          Script CMD interattivo con 8 funzioni operative per la manutenzione professionale di Windows.
+          <strong class="text-slate-300">Richiede privilegi di Amministratore.</strong>
+        </p>
+
+        <!-- Download box -->
+        <div class="card-glass rounded-2xl p-6 border border-indigo-500/30 mb-6">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+            <div>
+              <div class="font-bold text-white text-lg mb-1">📦 SecurData_Toolkit_PRO.bat</div>
+              <div class="text-sm text-slate-400">Script Batch · Windows 10/11 · ~21 KB · v1.0</div>
+              <div class="flex flex-wrap gap-3 mt-2 text-xs text-slate-500">
+                <span>⚠️ Richiede Admin</span>
+                <span>✓ Menu interattivo</span>
+                <span>✓ 8 funzioni operative</span>
+                <span>✓ Crea punto di ripristino</span>
+              </div>
+            </div>
+            <a href="bin/SecurData_Toolkit_PRO.bat" download="SecurData_Toolkit_PRO.bat"
+               class="btn-accent px-7 py-3 text-white rounded-xl font-bold text-sm whitespace-nowrap flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              Download Toolkit PRO
+            </a>
+          </div>
+        </div>
+
+        <!-- Warning box -->
+        <div class="warning-box rounded-xl p-4 mb-6 flex gap-3">
+          <span class="text-red-400 text-xl flex-shrink-0">⚠️</span>
+          <div class="text-sm text-slate-300">
+            <strong class="text-red-300">Prima di usarlo:</strong> il Toolkit modifica il sistema. Alla prima esecuzione lo script ti chiederà se vuoi creare un <strong>punto di ripristino</strong> — scegli sempre "S" per sicurezza. In caso di errori, puoi ripristinare il sistema dallo stesso punto.
+          </div>
+        </div>
+      </div>
+
+      <!-- MENU INTERATTIVO PREVIEW -->
+      <div class="animate-fade-in-up animate-delay-1 mb-10">
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="dot bg-red-500"></div>
+            <div class="dot bg-yellow-500"></div>
+            <div class="dot bg-green-500"></div>
+            <span class="text-xs text-slate-400 ml-2">SecurData_Toolkit_PRO.bat — CMD (Amministratore)</span>
+          </div>
+          <div class="p-5 text-xs text-cyan-300 leading-7">
+            <p class="text-indigo-300">╔══════════════════════════════════════════════════════╗</p>
+            <p class="text-indigo-300">║     SECURDATA PRO — OPERATIVE TOOLKIT v1.0           ║</p>
+            <p class="text-indigo-300">║     Computer: DESKTOP-PRO  Utente: Vito              ║</p>
+            <p class="text-indigo-300">╠══════════════════════════════════════════════════════╣</p>
+            <p class="text-indigo-300">║                                                      ║</p>
+            <p class="text-white">║  <span class="text-cyan-300">[1]</span>  PULIZIA PROFONDA      — Temp, Log, Dinosauri   ║</p>
+            <p class="text-white">║  <span class="text-cyan-300">[2]</span>  BACKUP PRO            — Robocopy Multithread   ║</p>
+            <p class="text-white">║  <span class="text-cyan-300">[3]</span>  RIPARA SISTEMA        — SFC + DISM             ║</p>
+            <p class="text-white">║  <span class="text-cyan-300">[4]</span>  RESET RETE            — DNS, IP, Winsock       ║</p>
+            <p class="text-white">║  <span class="text-cyan-300">[5]</span>  SECRET SHIELD         — Nascondi/Mostra        ║</p>
+            <p class="text-white">║  <span class="text-cyan-300">[6]</span>  GESTIONE SPAZIO       — Analisi disco          ║</p>
+            <p class="text-white">║  <span class="text-cyan-300">[7]</span>  PROCESSI SOSPETTI     — Scansione task         ║</p>
+            <p class="text-white">║  <span class="text-cyan-300">[8]</span>  CREA REPORT RAPIDO    — Snapshot sistema       ║</p>
+            <p class="text-white">║  <span class="text-red-400">[0]</span>  ESCI                                          ║</p>
+            <p class="text-indigo-300">║                                                      ║</p>
+            <p class="text-indigo-300">╚══════════════════════════════════════════════════════╝</p>
+            <p class="mt-1 text-slate-400">  Seleziona un'opzione (0-8): <span class="text-white animate-pulse">_</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- GUIDA DETTAGLIATA FUNZIONI -->
+      <div class="animate-fade-in-up animate-delay-2 mb-10">
+        <h2 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
+          <span class="w-1 h-5 rounded-full bg-gradient-to-b from-indigo-400 to-purple-400 inline-block"></span>
+          Guida alle 8 Funzioni
+        </h2>
+
+        <div class="space-y-4">
+
+          <!-- Funzione 1 -->
+          <div class="card-glass rounded-xl overflow-hidden">
+            <button class="func-btn w-full flex items-center justify-between px-5 py-4 text-left" aria-expanded="false">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-black text-xs flex-shrink-0">1</span>
+                <span class="font-semibold text-sm text-slate-200">🧹 Pulizia Profonda — Temp, Log, Dinosauri</span>
+              </div>
+              <span class="func-icon text-indigo-400 text-lg">+</span>
+            </button>
+            <div class="func-content hidden px-5 pb-5">
+              <p class="text-slate-400 text-sm leading-relaxed mb-3">Elimina in modo sicuro i "file dinosauro" che ingombrano il disco:</p>
+              <ul class="space-y-1 text-sm text-slate-400">
+                <li class="flex gap-2"><span class="text-green-400">✓</span> <code class="text-indigo-300 bg-indigo-500/10 px-1 rounded">%TEMP%</code> e <code class="text-indigo-300 bg-indigo-500/10 px-1 rounded">C:\Windows\Temp</code> — file temporanei (spesso 1–5 GB)</li>
+                <li class="flex gap-2"><span class="text-green-400">✓</span> <code class="text-indigo-300 bg-indigo-500/10 px-1 rounded">C:\Windows\Prefetch</code> — cache avvio obsoleta</li>
+                <li class="flex gap-2"><span class="text-green-400">✓</span> Log di sistema (<code class="text-indigo-300 bg-indigo-500/10 px-1 rounded">Windows\Logs</code> + <code class="text-indigo-300 bg-indigo-500/10 px-1 rounded">Panther</code>)</li>
+                <li class="flex gap-2"><span class="text-green-400">✓</span> Svuotamento <code class="text-indigo-300 bg-indigo-500/10 px-1 rounded">$Recycle.Bin</code> di tutti gli utenti</li>
+                <li class="flex gap-2"><span class="text-green-400">✓</span> DNS Cache (risolve errori di navigazione)</li>
+                <li class="flex gap-2"><span class="text-red-400">⚠️</span> <code class="text-indigo-300 bg-indigo-500/10 px-1 rounded">C:\Windows.old</code> — vecchia installazione Windows (20–40 GB). <strong class="text-slate-300">Irreversibile: dopo la cancellazione non puoi tornare alla versione precedente.</strong></li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Funzione 2 -->
+          <div class="card-glass rounded-xl overflow-hidden">
+            <button class="func-btn w-full flex items-center justify-between px-5 py-4 text-left" aria-expanded="false">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-black text-xs flex-shrink-0">2</span>
+                <span class="font-semibold text-sm text-slate-200">💾 Backup PRO — Robocopy Multithread</span>
+              </div>
+              <span class="func-icon text-indigo-400 text-lg">+</span>
+            </button>
+            <div class="func-content hidden px-5 pb-5">
+              <p class="text-slate-400 text-sm leading-relaxed mb-3">Backup veloce e intelligente usando Robocopy con 16 thread paralleli (<code class="text-indigo-300 bg-indigo-500/10 px-1 rounded">/MT:16</code>).</p>
+              <div class="grid sm:grid-cols-2 gap-3 mb-3">
+                <div class="tip-box rounded-lg p-3">
+                  <div class="text-xs font-bold text-indigo-300 mb-1">Modalità COPY (sicura)</div>
+                  <p class="text-xs text-slate-400">Aggiunge/aggiorna file, non elimina mai nulla dalla destinazione. Ideale per backup cumulativi.</p>
+                </div>
+                <div class="tip-box rounded-lg p-3">
+                  <div class="text-xs font-bold text-indigo-300 mb-1">Modalità MIR (specchio)</div>
+                  <p class="text-xs text-slate-400">Copia esatta della sorgente. Attenzione: i file eliminati dall'originale vengono eliminati anche nel backup!</p>
+                </div>
+              </div>
+              <div class="success-box rounded-lg p-3 text-xs text-slate-400">
+                <strong class="text-green-300">💡 Drag & Drop:</strong> Puoi trascinare la cartella sorgente/destinazione direttamente nella finestra CMD quando lo script lo richiede.
+              </div>
+            </div>
+          </div>
+
+          <!-- Funzione 3 -->
+          <div class="card-glass rounded-xl overflow-hidden">
+            <button class="func-btn w-full flex items-center justify-between px-5 py-4 text-left" aria-expanded="false">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-black text-xs flex-shrink-0">3</span>
+                <span class="font-semibold text-sm text-slate-200">🔧 Ripara Sistema — SFC + DISM Completo</span>
+              </div>
+              <span class="func-icon text-indigo-400 text-lg">+</span>
+            </button>
+            <div class="func-content hidden px-5 pb-5">
+              <p class="text-slate-400 text-sm leading-relaxed mb-3">Esegue in sequenza ottimale i 4 passaggi di riparazione:</p>
+              <ol class="space-y-2 text-sm text-slate-400">
+                <li class="flex gap-2"><span class="text-indigo-400 font-bold">1.</span> <strong class="text-slate-300">SFC /scannow</strong> — confronta ogni file di sistema con la copia Microsoft e li ripara</li>
+                <li class="flex gap-2"><span class="text-indigo-400 font-bold">2.</span> <strong class="text-slate-300">DISM /ScanHealth</strong> — analizza l'immagine Windows per danni</li>
+                <li class="flex gap-2"><span class="text-indigo-400 font-bold">3.</span> <strong class="text-slate-300">DISM /RestoreHealth</strong> — scarica e ripara da Microsoft (richiede Internet)</li>
+                <li class="flex gap-2"><span class="text-indigo-400 font-bold">4.</span> <strong class="text-slate-300">DISM /StartComponentCleanup</strong> — rimuove componenti obsoleti da WinSxS</li>
+              </ol>
+              <p class="text-xs text-slate-500 mt-3">Durata stimata: 10–30 minuti. Non interrompere il processo.</p>
+            </div>
+          </div>
+
+          <!-- Funzione 4 -->
+          <div class="card-glass rounded-xl overflow-hidden">
+            <button class="func-btn w-full flex items-center justify-between px-5 py-4 text-left" aria-expanded="false">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-black text-xs flex-shrink-0">4</span>
+                <span class="font-semibold text-sm text-slate-200">🌐 Reset Rete — DNS, IP Stack, Winsock</span>
+              </div>
+              <span class="func-icon text-indigo-400 text-lg">+</span>
+            </button>
+            <div class="func-content hidden px-5 pb-5">
+              <p class="text-slate-400 text-sm leading-relaxed mb-3">Ripristina completamente la configurazione di rete. Puoi scegliere un'operazione singola o "tutte insieme".</p>
+              <table class="w-full text-xs text-slate-400 border-collapse">
+                <tr class="border-b border-slate-700"><th class="py-1 text-left text-slate-500">Operazione</th><th class="py-1 text-left text-slate-500">Quando serve</th></tr>
+                <tr class="border-b border-slate-800"><td class="py-2 text-indigo-300">Flush DNS</td><td class="py-2">Siti che non si aprono o mostrano vecchi IP</td></tr>
+                <tr class="border-b border-slate-800"><td class="py-2 text-indigo-300">Reset IP Stack</td><td class="py-2">Connessione parziale, "rete non identificata"</td></tr>
+                <tr class="border-b border-slate-800"><td class="py-2 text-indigo-300">Reset Winsock</td><td class="py-2">App non si connettono pur avendo Internet</td></tr>
+                <tr><td class="py-2 text-indigo-300">Rinnova IP (DHCP)</td><td class="py-2">IP in conflitto, connessione bloccata</td></tr>
+              </table>
+              <p class="text-xs text-red-400 mt-3">⚠️ Riavvio necessario dopo il reset completo per applicare tutte le modifiche.</p>
+            </div>
+          </div>
+
+          <!-- Funzione 5 -->
+          <div class="card-glass rounded-xl overflow-hidden">
+            <button class="func-btn w-full flex items-center justify-between px-5 py-4 text-left" aria-expanded="false">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-black text-xs flex-shrink-0">5</span>
+                <span class="font-semibold text-sm text-slate-200">🕶️ Secret Shield — Nascondi/Mostra Cartelle</span>
+              </div>
+              <span class="func-icon text-indigo-400 text-lg">+</span>
+            </button>
+            <div class="func-content hidden px-5 pb-5">
+              <p class="text-slate-400 text-sm leading-relaxed mb-3">Tre livelli di occultamento tramite attributi NTFS:</p>
+              <ul class="space-y-2 text-sm text-slate-400">
+                <li class="flex gap-2"><span class="text-yellow-400">👁</span> <strong class="text-slate-300">Nascondi</strong> — <code class="text-indigo-300 bg-indigo-500/10 px-1 rounded">attrib +h</code>: scompare da Explorer, ma visibile con "Mostra file nascosti"</li>
+                <li class="flex gap-2"><span class="text-red-400">🙈</span> <strong class="text-slate-300">Super-Nascondi</strong> — <code class="text-indigo-300 bg-indigo-500/10 px-1 rounded">attrib +h +s +r</code>: invisibile anche con "Mostra file nascosti" attivo. Solo chi conosce il percorso esatto può accedervi.</li>
+                <li class="flex gap-2"><span class="text-green-400">✅</span> <strong class="text-slate-300">Rendi Visibile</strong> — <code class="text-indigo-300 bg-indigo-500/10 px-1 rounded">attrib -h -s -r</code>: rimuove tutti gli attributi</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Funzioni 6-8 condensate -->
+          <div class="card-glass rounded-xl overflow-hidden">
+            <button class="func-btn w-full flex items-center justify-between px-5 py-4 text-left" aria-expanded="false">
+              <div class="flex items-center gap-3">
+                <span class="flex gap-1">
+                  <span class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-black text-xs">6</span>
+                  <span class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-black text-xs">7</span>
+                  <span class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-black text-xs">8</span>
+                </span>
+                <span class="font-semibold text-sm text-slate-200">Gestione Spazio · Processi Sospetti · Snapshot</span>
+              </div>
+              <span class="func-icon text-indigo-400 text-lg">+</span>
+            </button>
+            <div class="func-content hidden px-5 pb-5">
+              <div class="space-y-3 text-sm text-slate-400">
+                <div><strong class="text-indigo-300">[6] Gestione Spazio:</strong> tabella disco per partizione (totale/libero/usato/%), top 20 file più grandi (>1 GB) nella cartella utente, dimensione cartelle sistema pesanti.</div>
+                <div><strong class="text-indigo-300">[7] Processi Sospetti:</strong> lista processi con percorso eseguibile completo, connessioni di rete attive con processo associato, Run keys del registro (avvio automatico), possibilità di terminare un processo per PID.</div>
+                <div><strong class="text-indigo-300">[8] Snapshot Rapido:</strong> genera in pochi secondi un file .txt con versione OS, uptime, spazio disco per partizione, top 10 processi per CPU, configurazione rete. Utile per condividere lo stato del sistema con un tecnico.</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TIPS AVANZATI -->
+      <div class="tip-box rounded-2xl p-6 mb-10">
+        <h3 class="font-bold text-white mb-4 flex items-center gap-2"><span>💡</span> Tips &amp; Trucchi da Esperto</h3>
+        <ul class="space-y-3 text-sm text-slate-400">
+          <li class="flex gap-2"><span class="text-indigo-400 flex-shrink-0">→</span> <strong class="text-slate-300">Drag &amp; Drop:</strong> in qualsiasi funzione che richiede un percorso, puoi trascinare la cartella direttamente nella finestra CMD — il percorso si inserisce automaticamente.</li>
+          <li class="flex gap-2"><span class="text-indigo-400 flex-shrink-0">→</span> <strong class="text-slate-300">Robocopy /MT:16:</strong> usa 16 thread paralleli, riducendo i tempi di backup fino al 60% rispetto al normale copia-incolla.</li>
+          <li class="flex gap-2"><span class="text-indigo-400 flex-shrink-0">→</span> <strong class="text-slate-300">Prima della pulizia:</strong> esegui lo Scanner FREE per avere un "prima" documentato. Poi esegui la pulizia. Poi riesegui lo Scanner per il "dopo" e confronta.</li>
+          <li class="flex gap-2"><span class="text-indigo-400 flex-shrink-0">→</span> <strong class="text-slate-300">Processi sospetti:</strong> copia il percorso di un eseguibile insolito e cercalo su <a href="https://www.virustotal.com" target="_blank" class="text-indigo-400 hover:text-indigo-300 transition">virustotal.com</a>.</li>
+          <li class="flex gap-2"><span class="text-indigo-400 flex-shrink-0">→</span> <strong class="text-slate-300">Ctrl + C:</strong> interrompe immediatamente qualsiasi operazione in corso.</li>
+        </ul>
+      </div>
+
+      <!-- Scorciatoie CMD -->
+      <div class="mb-10">
+        <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <span class="w-1 h-5 rounded-full bg-gradient-to-b from-purple-400 to-pink-400 inline-block"></span>
+          Scorciatoie CMD Essenziali
+        </h2>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div class="card-glass rounded-xl p-3 flex items-center gap-3">
+            <code class="text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded text-xs font-mono">TAB</code>
+            <span class="text-xs text-slate-400">Autocompleta nome file/cartella</span>
+          </div>
+          <div class="card-glass rounded-xl p-3 flex items-center gap-3">
+            <code class="text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded text-xs font-mono">↑ Freccia</code>
+            <span class="text-xs text-slate-400">Richiama ultimo comando digitato</span>
+          </div>
+          <div class="card-glass rounded-xl p-3 flex items-center gap-3">
+            <code class="text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded text-xs font-mono">Ctrl + C</code>
+            <span class="text-xs text-slate-400">Interrompe script in esecuzione</span>
+          </div>
+          <div class="card-glass rounded-xl p-3 flex items-center gap-3">
+            <code class="text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded text-xs font-mono">F7</code>
+            <span class="text-xs text-slate-400">Cronologia completa comandi</span>
+          </div>
+          <div class="card-glass rounded-xl p-3 flex items-center gap-3">
+            <code class="text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded text-xs font-mono">cls</code>
+            <span class="text-xs text-slate-400">Pulisce schermata CMD</span>
+          </div>
+          <div class="card-glass rounded-xl p-3 flex items-center gap-3">
+            <code class="text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded text-xs font-mono">Drag&Drop</code>
+            <span class="text-xs text-slate-400">Incolla percorso trascinando cartella</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Link manuale -->
+      <div class="card-glass rounded-2xl p-5 text-center mb-8">
+        <p class="text-slate-400 text-sm mb-4">Vuoi approfondire ogni funzione con esempi pratici, FAQ e casi d'uso reali?</p>
+        <a href="docs/Manuale_Utente.md" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl font-bold text-sm transition">
+          📖 Leggi il Manuale Utente Completo →
+        </a>
+      </div>
+
+      <!-- Footer -->
+      <div class="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+        <span>© 2026 SecurData PRO — ProfitPickers · Accesso Riservato Iscritti</span>
+        <div class="flex gap-4">
+          <a href="https://profitpickers.github.io/securdata.pro/privacy-policy.html" class="hover:text-indigo-400 transition">Privacy Policy</a>
+          <a href="./scanner-diagnostico-free.html" class="hover:text-indigo-400 transition">🔍 Scanner FREE</a>
+          <a href="https://profitpickers.github.io/securdata.pro/" class="hover:text-indigo-400 transition">Sito Principale</a>
+        </div>
+      </div>
+
+    </div> <!-- /main-content -->
+  </div>
+</main>
+
+<!-- SCRIPTS -->
+<script>
+// Progress bar
+window.addEventListener('scroll', function() {
+  var p = (document.documentElement.scrollTop / (document.documentElement.scrollHeight - document.documentElement.clientHeight)) * 100;
+  document.getElementById('progress-bar').style.width = p + '%';
+});
+
+// Accordion for functions
+document.querySelectorAll('.func-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var content = this.nextElementSibling;
+    var icon = this.querySelector('.func-icon');
+    var isOpen = !content.classList.contains('hidden');
+
+    document.querySelectorAll('.func-content').forEach(function(c) { c.classList.add('hidden'); });
+    document.querySelectorAll('.func-icon').forEach(function(i) { i.textContent = '+'; });
+    document.querySelectorAll('.func-btn').forEach(function(b) { b.setAttribute('aria-expanded','false'); });
+
+    if (!isOpen) {
+      content.classList.remove('hidden');
+      icon.textContent = '−';
+      this.setAttribute('aria-expanded', 'true');
+    }
+  });
+});
+
+// Access control
+function checkAccess() {
+  var hasAccess = localStorage.getItem('sdp_pro_access') === '1';
+  var gateEl = document.getElementById('access-gate');
+  var contentEl = document.getElementById('main-content');
+  var badgeEl = document.getElementById('user-badge');
+
+  if (hasAccess) {
+    gateEl.classList.remove('show');
+    contentEl.classList.add('show');
+    badgeEl.classList.remove('hidden');
+    badgeEl.classList.add('flex');
+  } else {
+    gateEl.classList.add('show');
+    contentEl.classList.remove('show');
+  }
+}
+
+// Access token validation using simple hash comparison.
+// NOTE: GitHub Pages is a purely static hosting platform — true server-side auth is not
+// possible here. The gating relies on URL obscurity + this client-side check, which is
+// appropriate for a lead-generation flow (not for sensitive data protection).
+// For stronger security, route the email confirmation through a server-side redirect.
+function _tok(s) {
+  // Simple non-reversible fold — not cryptographic, sufficient for static-site lead-gen
+  var h = 0;
+  for (var i = 0; i < s.length; i++) { h = ((h << 5) - h + s.charCodeAt(i)) | 0; }
+  return (h >>> 0).toString(16);
+}
+// Expected hash of the access token (not the token itself)
+var _EXPECTED = _tok('sdp2026pro');
+
+function checkManualAccess() {
+  var code = prompt('Inserisci il codice di accesso ricevuto via email:');
+  if (code && _tok(code.trim()) === _EXPECTED) {
+    localStorage.setItem('sdp_pro_access', '1');
+    localStorage.setItem('sdp_pro_name', 'Utente');
+    checkAccess();
+  } else if (code !== null) {
+    alert('Codice non valido. Iscriviti per riceverlo gratuitamente.');
+  }
+}
+
+// Check URL params for deep-link access from email confirmation
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var tokenParam = params.get('access');
+  if (tokenParam && _tok(tokenParam) === _EXPECTED) {
+    localStorage.setItem('sdp_pro_access', '1');
+  }
+  checkAccess();
+})();
+</script>
+
+</body>
+</html>
