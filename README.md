@@ -10,7 +10,7 @@
 
 SecurData PRO è una suite di script Batch/PowerShell ottimizzati per utenti avanzati e professionisti IT che necessitano di uno **screening profondo dell'hardware e del software** Windows e di strumenti operativi rapidi per la manutenzione del sistema.
 
-🌐 **[Visita il sito ufficiale](https://profitpickers.github.io/securdata.pro/)** | 📋 **[Manuale Completo](docs/Manuale_Utente.md)**
+🌐 **[Sito Ufficiale](https://profitpickers.github.io/securdata.pro/)** | 🔍 **[Scanner FREE — Download](https://profitpickers.github.io/doc-base-cmd-tool-diagnostico-operativo/scanner-diagnostico-free.html)** | 🛠️ **[CMD Suite Homepage](https://profitpickers.github.io/doc-base-cmd-tool-diagnostico-operativo/)** | 🎁 **[Risorse Gratuite](https://profitpickers.github.io/securdata.pro/risorse-gratuite.html)** | 📋 **[Manuale Completo](docs/Manuale_Utente.md)**
 
 ---
 
@@ -46,6 +46,26 @@ Menu interattivo con 8 funzioni operative avanzate. **Richiede privilegi di Ammi
 
 ---
 
+## 🔗 Integrazione con SECURDATA.PRO — Risorse Gratuite
+
+Questo tool è integrato nella pagina **[Risorse Gratuite](https://profitpickers.github.io/securdata.pro/risorse-gratuite.html)** di SECURDATA.PRO.
+
+Per aggiungere o aggiornare la card di rimando in quella pagina, usa lo snippet HTML pronto in:
+
+📄 **[`docs/securdata-integration-card.html`](docs/securdata-integration-card.html)**
+
+**URL pagina Scanner FREE (GitHub Pages):**
+```
+https://profitpickers.github.io/doc-base-cmd-tool-diagnostico-operativo/scanner-diagnostico-free.html
+```
+
+**URL CMD Suite Homepage:**
+```
+https://profitpickers.github.io/doc-base-cmd-tool-diagnostico-operativo/
+```
+
+---
+
 ## 📂 Struttura del Repository
 
 ```
@@ -53,10 +73,12 @@ Menu interattivo con 8 funzioni operative avanzate. **Richiede privilegi di Ammi
 │   ├── SecurData_Scanner_FREE.bat     # Diagnostica sola lettura (FREE)
 │   └── SecurData_Toolkit_PRO.bat      # Toolkit operativo (Iscritti PRO, richiede Admin)
 ├── 📂 docs/
-│   └── Manuale_Utente.md              # Guida completa con FAQ e trucchi
+│   ├── Manuale_Utente.md              # Guida completa con FAQ e trucchi
+│   └── securdata-integration-card.html # Card HTML pronta per risorse-gratuite.html
 ├── 📂 logs/                           # Cartella placeholder per report generati
-├── index.html                         # Landing page principale
-├── scanner-diagnostico-free.html      # Pagina dettaglio Scanner FREE
+├── index.html                         # CMD Suite homepage (GitHub Pages)
+├── scanner-diagnostico-free.html      # Pagina download Scanner FREE (GitHub Pages)
+├── toolkit-pro-b7x9k2.html            # Pagina accesso Toolkit PRO (iscritti)
 └── README.md
 ```
 
